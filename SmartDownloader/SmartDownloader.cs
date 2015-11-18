@@ -1,4 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Net;
 using Android.Widget;
 
 namespace kojan.SmartDownloader
@@ -26,9 +30,46 @@ namespace kojan.SmartDownloader
         /// </summary>
         public void StartDownloading()
         {
-            CheckIfAllFinished();
+            var webClient = new WebClient();
+
+            var itemsList = GetItemsInQueue();
+
+            CheckIfAllFinished(); // make sure we are not done,maybe no items in list
+
+
+            itemsList.ForEach(item =>
+            {
+                webClient.DownloadFileCompleted += OnDownloadFileCompleted(item.Id);
+
+                webClient.DownloadFileAsync(new Uri(item.Url), item.FileName);
+            });
+
+            
 
         }
+
+
+        private  AsyncCompletedEventHandler OnDownloadFileCompleted(int id)
+        {
+            Action<object, AsyncCompletedEventArgs> action = (sender, e) =>
+            {
+                if (e.Error != null)
+                {
+                    throw e.Error;
+                }
+
+                var itemsInQueue = GetItemsInQueue();
+                var itemToRemove = itemsInQueue.FirstOrDefault(item => item.Id == id);
+
+                if (itemToRemove != null)
+                    itemsInQueue.Remove(itemToRemove);
+
+                CheckIfAllFinished();
+
+            };
+            return new AsyncCompletedEventHandler(action);
+        }
+
 
         /// <summary>
         /// will check if no items  left wating to be downloaded, if non left will notifay 
