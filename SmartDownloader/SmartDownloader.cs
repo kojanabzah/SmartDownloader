@@ -12,42 +12,45 @@ namespace kojan.SmartDownloader
 
 
         private List<IItem> _itemsToDowload; 
+        
 
         public SmartDownloader()
         {
-            _itemsToDowload = new List<IItem>();
             
         }
 
         public void AddFileToQueue(IItem item)
         {
-            //Not Sure i want to init _itemsToDowload my self here , its better user will use the ctr to do this .
-            if(_itemsToDowload == null)
-                throw new System.NullReferenceException("_itemsToDowload cannot be null,pease check that you initialized SmartDownloader");
+            var itemsList = GetItemsInQueue();
 
-            _itemsToDowload.Add(item);
+            itemsList.Add(item);
         }
 
         public void StartDownloading()
         {
-            //Not Sure i want to init _itemsToDowload my self here , its better user will use the ctr to do this .
-            if (_itemsToDowload == null)
-                throw new System.NullReferenceException("_itemsToDowload cannot be null,pease check that you initialized SmartDownloader");
-
             CheckIfAllFinished();
-
-
-
-
 
         }
 
         private void CheckIfAllFinished()
         {
-            if (AllDownloadsCompleted != null && _itemsToDowload.Count == 0)
+            var itemsList = GetItemsInQueue();
+
+            if (AllDownloadsCompleted != null && itemsList.Count == 0)
                 AllDownloadsCompleted();
         }
-        
 
+
+        public List<IItem> GetItemsInQueue()
+        {
+            return _itemsToDowload ?? (_itemsToDowload = new List<IItem>());
+        }
+
+        public int GetNumberOfItemsInQueue()
+        {
+            var itemsList = GetItemsInQueue();
+
+            return itemsList.Count;
+        }
     }
 }
