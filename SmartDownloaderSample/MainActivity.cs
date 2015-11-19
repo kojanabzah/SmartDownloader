@@ -23,26 +23,59 @@ namespace SmartDownloaderSample
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            // Get our button from the layout resource,
-            // and attach an event to it
-            Button button = FindViewById<Button>(Resource.Id.MyButton);
-
-            button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
-
             Init();
+            InitUi();
         }
 
         private void Init()
         {
             smartDownloader = new SmartDownloader();
-            smartDownloader.AllDownloadsCompleted += () => Toast.MakeText(ApplicationContext, "All Filed downloaded", ToastLength.Long);
+            smartDownloader.AllDownloadsCompleted += AlertAllFinished;
+        }
 
+        private void InitUi()
+        {
+            // Get our button from the layout resource,
+            // and attach an event to it
+            var startDownload = FindViewById<Button>(Resource.Id.StartDownloadBtn);
 
-            smartDownloader.StartDownloading();
+            startDownload.Click += delegate
+            {
+                smartDownloader.StartDownloading();
+            };
+
+            // Get our button from the layout resource,
+            // and attach an event to it
+            var addExampleFiles = FindViewById<Button>(Resource.Id.AddExmapleFilesBtn);
+
+            addExampleFiles.Click += (sender, args) =>
+            {
+                CreateDownloadListExmaple();
+            };
+
+        }
+
+        private void AlertAllFinished()
+        {
+            Toast.MakeText(ApplicationContext, "All Filed downloaded", ToastLength.Long).Show();
         }
 
 
+        private void CreateDownloadListExmaple()
+        {
+            var item = new Item();
+            item.Url = "http://mirror.internode.on.net/pub/test/1meg.test";
+            item.FileName = "file1.test";
+            item.Id = 1;
+            smartDownloader.AddFileToQueue(item);
 
+            item.Url = "http://mirror.internode.on.net/pub/test/5meg.test1";
+            item.FileName = "file2.test";
+            item.Id = 2;
+
+            smartDownloader.AddFileToQueue(item);
+
+        }
 
 
 

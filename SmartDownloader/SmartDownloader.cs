@@ -34,7 +34,8 @@ namespace kojan.SmartDownloader
 
             var itemsList = GetItemsInQueue();
 
-            CheckIfAllFinished(); // make sure we are not done,maybe no items in list
+            if (CheckIfAllFinished()) // make sure we are not done,maybe no items in list
+                return;
 
 
             itemsList.ForEach(item =>
@@ -74,12 +75,15 @@ namespace kojan.SmartDownloader
         /// <summary>
         /// will check if no items  left wating to be downloaded, if non left will notifay 
         /// </summary>
-        private void CheckIfAllFinished()
+        private bool CheckIfAllFinished()
         {
             var itemsInQueue = GetNumberOfItemsInQueue();
 
-            if (AllDownloadsCompleted != null && itemsInQueue == 0)
-                AllDownloadsCompleted();
+            if (AllDownloadsCompleted == null || itemsInQueue != 0) return false;
+
+            AllDownloadsCompleted();
+
+            return true;
         }
 
         /// <summary>

@@ -62,8 +62,11 @@ namespace SmartDownloaderSample
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050001
+			public const int AddExmapleFilesBtn = 2131034113;
+			
 			// aapt resource value: 0x7f050000
-			public const int MyButton = 2131034112;
+			public const int StartDownloadBtn = 2131034112;
 			
 			static Id()
 			{
