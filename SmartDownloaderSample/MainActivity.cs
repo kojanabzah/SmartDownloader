@@ -63,17 +63,24 @@ namespace SmartDownloaderSample
 
         private void CreateDownloadListExmaple()
         {
-            var item = new Item();
-            item.Url = "http://mirror.internode.on.net/pub/test/1meg.test";
-            item.FileName = "file1.test";
-            item.Id = 1;
-            smartDownloader.AddFileToQueue(item);
-
-            item.Url = "http://mirror.internode.on.net/pub/test/5meg.test1";
-            item.FileName = "file2.test";
-            item.Id = 2;
+            var item = new Item
+            {
+                Url = "http://mirror.internode.on.net/pub/test/1meg.test",
+                FileName = "file1.test",
+                Id = 1
+            };
 
             smartDownloader.AddFileToQueue(item);
+
+            item = new Item
+            {
+                Url = "http://mirror.internode.on.net/pub/test/5meg.test1",
+                FileName = "file2.test",
+                Id = 2
+            };
+
+            smartDownloader.AddFileToQueue(item);
+          
 
         }
 

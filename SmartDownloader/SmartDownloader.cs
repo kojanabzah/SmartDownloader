@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 using Android.Widget;
@@ -12,8 +13,6 @@ namespace kojan.SmartDownloader
     public class SmartDownloader
     {
         public event MyVoidDelegate AllDownloadsCompleted;
-
-
 
         private List<IItem> _itemsToDowload; 
         
@@ -30,22 +29,36 @@ namespace kojan.SmartDownloader
         /// </summary>
         public void StartDownloading()
         {
-            var webClient = new WebClient();
+            
 
             var itemsList = GetItemsInQueue();
 
             if (CheckIfAllFinished()) // make sure we are not done,maybe no items in list
                 return;
 
+            var directory = GetSaveToDirectory();
 
             itemsList.ForEach(item =>
             {
+                var webClient = new WebClient();
+
                 webClient.DownloadFileCompleted += OnDownloadFileCompleted(item.Id);
 
-                webClient.DownloadFileAsync(new Uri(item.Url), item.FileName);
+                var filePath = directory + "/" + item.FileName;
+
+                webClient.DownloadFileAsync(new Uri(item.Url), filePath);
             });
 
             
+
+        }
+
+        private string GetSaveToDirectory()
+        {
+
+            var documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal); // iOS 7 and earlier
+
+            return documentsFolder;
 
         }
 
@@ -94,6 +107,7 @@ namespace kojan.SmartDownloader
         {
             return _itemsToDowload ?? (_itemsToDowload = new List<IItem>());
         }
+
 
         /// <summary>
         /// will be used to get the number of files that are wating to be downloaded
